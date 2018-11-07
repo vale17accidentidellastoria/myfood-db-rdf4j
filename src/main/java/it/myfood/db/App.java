@@ -1,14 +1,8 @@
 package it.myfood.db;
-import info.aduna.iteration.Iterations;
 
-import org.openrdf.model.impl.LinkedHashModel;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-
-import org.eclipse.rdf4j.*;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.FOAF;
@@ -41,7 +35,9 @@ public class App {
 				model = Rio.parse(input, "", RDFFormat.RDFXML);
 			} catch (RDFParseException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// se.printStackTrace();
+				// e.getMessage();
+				System.out.println(" i am here" );
 			} catch (UnsupportedRDFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -78,7 +74,9 @@ public class App {
     				*/
     
     		} catch(Exception e) {
-    			e.printStackTrace();
+    			//e.printStackTrace();
+    			System.out.println(" i am here" );
+    			
     		}
     		
     		// We do a simple SPARQL SELECT-query that retrieves all resources of
