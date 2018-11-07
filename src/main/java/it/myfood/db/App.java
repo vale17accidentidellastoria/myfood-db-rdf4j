@@ -70,10 +70,12 @@ public class App {
     			// let's check that our data is actually in the database
     			
     			RepositoryResult<Statement> result = conn.getStatements(null, null, null, true ); 
+    				/*	
     				while (result.hasNext()) {
     					Statement st = result.next();
     					System.out.println("db contains: " + st);
     				}
+    				*/
     
     		} catch(Exception e) {
     			e.printStackTrace();
