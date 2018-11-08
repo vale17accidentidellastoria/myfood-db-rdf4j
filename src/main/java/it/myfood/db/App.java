@@ -41,33 +41,9 @@ public class App {
 	@SuppressWarnings("restriction")
 	public static void main(String[] args) throws IOException {
 
-		//Initialized Rdf4j database
-		String filename = "my-food-ontology-rdfxml.owl";
-		InputStream input = App.class.getResourceAsStream("/" + filename);
-		Model model = null;
+		//Call function to create Rdf4j database
+		createRdf4jDB();
 
-		try {
-			model = Rio.parse(input, "", RDFFormat.RDFXML);
-		} catch (RDFParseException e) {
-			e.printStackTrace();
-		} catch (UnsupportedRDFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		Repository db = new SailRepository(new MemoryStore());
-		db.initialize();
-		
-		conn = db.getConnection();
-		
-		try {
-			conn.add(model);
-			RepositoryResult<Statement> result = conn.getStatements(null, null, null, true ); 
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		  
 		
 		// To make it work on heroku
 		int port = Integer.valueOf(System.getenv("PORT"));
@@ -152,6 +128,38 @@ public class App {
 		os.close();
   	    
 	  }
+	
+	private static void createRdf4jDB() {
+		
+		String filename = "my-food-ontology-rdfxml.owl";
+		InputStream input = App.class.getResourceAsStream("/" + filename);
+		Model model = null;
+
+		try {
+			model = Rio.parse(input, "", RDFFormat.RDFXML);
+		} catch (RDFParseException e) {
+			e.printStackTrace();
+		} catch (UnsupportedRDFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Repository db = new SailRepository(new MemoryStore());
+		db.initialize();
+		
+		conn = db.getConnection();
+		
+		try {
+			conn.add(model);
+			RepositoryResult<Statement> result = conn.getStatements(null, null, null, true ); 
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
 		
 	
 	
