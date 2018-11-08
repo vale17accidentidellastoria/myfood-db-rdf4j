@@ -45,14 +45,14 @@ public class App {
 		//Call function to create Rdf4j database
 		createRdf4jDB();
 
-		
+		/*
 		// To make it work on heroku
 		int port = Integer.valueOf(System.getenv("PORT"));
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		
+		*/
 				
 		//to make it work locally
-		//HttpServer server = HttpServer.create(new InetSocketAddress(8888), 0);
+		HttpServer server = HttpServer.create(new InetSocketAddress(8888), 0);
 		  
 		//Route to welcome page
 		HttpContext context = server.createContext("/");
@@ -115,8 +115,9 @@ public class App {
 		try {
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
-				response += "?subject = " + solution.getValue("subject") +"\n";		   
-			}
+				//response += "?subject = " + solution.getValue("subject") +"\n";
+				response += solution.toString();		   
+			}			
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
 		}
