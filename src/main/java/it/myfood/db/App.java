@@ -1,7 +1,31 @@
 package it.myfood.db;
 
+import java.net.*;
+import java.io.*;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Date;
+import java.util.StringTokenizer;
+
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpPrincipal;
+import com.sun.net.httpserver.HttpServer;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -24,63 +48,34 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
-public class App {
+public class App{
+	/*
     public static void main(String[] args) throws RepositoryException, RDFHandlerException {
-    		
-    		// First load our RDF file as a Model.
+
     		String filename = "my-food-ontology-rdfxml.owl";
     		InputStream input = App.class.getResourceAsStream("/" + filename);
     		Model model = null;
 			try {
 				model = Rio.parse(input, "", RDFFormat.RDFXML);
 			} catch (RDFParseException e) {
-				// TODO Auto-generated catch block
-				// se.printStackTrace();
-				// e.getMessage();
+				e.printStackTrace();
 				System.out.println(" i am here" );
 			} catch (UnsupportedRDFormatException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			/*
-			//Prints all the triples in a model
-			for (Statement statement: model) {
-				System.out.println(statement);
-			}
-			*/
-
-    		//Creating the database
 			Repository db = new SailRepository(new MemoryStore());
     		db.initialize();
 
-    		// Open a connection to the database
     		RepositoryConnection conn = db.getConnection();
     		try {
-    			// add the model
     			conn.add(model);
-
-    			// let's check that our data is actually in the database
-    			
     			RepositoryResult<Statement> result = conn.getStatements(null, null, null, true ); 
-    				/*	
-    				while (result.hasNext()) {
-    					Statement st = result.next();
-    					System.out.println("db contains: " + st);
-    				}
-    				*/
-    
     		} catch(Exception e) {
-    			//e.printStackTrace();
-    			System.out.println(" i am here" );
-    			
+    			e.printStackTrace();
     		}
-    		
-    		// We do a simple SPARQL SELECT-query that retrieves all resources of
-    	    // type `ex:Artist`, and their first names.
+    	
     	    String queryString = "PREFIX ex: <http://example.org/> \n";
     	    queryString += "PREFIX foaf: <" + FOAF.NAMESPACE + "> \n";
     	    queryString += "SELECT ?subject ?predicate ?object \n";
@@ -92,32 +87,68 @@ public class App {
 			try {
 				query = conn.prepareTupleQuery(new QueryLanguage("SPARQL"), queryString);
 			} catch (MalformedQueryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	    // A QueryResult is also an AutoCloseable resource, so make sure it gets
-    	    // closed when done.
     	    TupleQueryResult result = null;
 			try {
 				result = query.evaluate();
 			} catch (QueryEvaluationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		// we just iterate over all solutions in the result...
     		
     	    try {
 				while (result.hasNext()) {
 				    BindingSet solution = result.next();
-				    // ... and print out the value of the variable bindings
-				    // for ?s and ?n
 				    System.out.println("?subject = " + solution.getValue("subject"));
 				}
 			} catch (QueryEvaluationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	    
     	
-    		}
+	}*/	
+	
+	@SuppressWarnings("restriction")
+	public static void main(String[] args) throws IOException {
+		  HttpServer server = HttpServer.create(new InetSocketAddress(8500), 0);
+		  HttpContext context1 = server.createContext("/");
+	      HttpContext context2 = server.createContext("/example");
+	      context1.setHandler(App::handleRequest);
+	      context2.setHandler(App::handleRequest);
+	      server.start();
+	  }
+
+	@SuppressWarnings("restriction")
+	private static void handleRequest(HttpExchange exchange) throws IOException {
+		  URI requestURI = exchange.getRequestURI();
+	      printRequestInfo(exchange);
+	      String response = "This is the response at " + requestURI;
+	      exchange.sendResponseHeaders(200, response.getBytes().length);
+	      OutputStream os = exchange.getResponseBody();
+	      os.write(response.getBytes());
+	      os.close();
+	  }
+	
+	private static void printRequestInfo(HttpExchange exchange) {
+	      System.out.println("-- headers --");
+	      Headers requestHeaders = exchange.getRequestHeaders();
+	      requestHeaders.entrySet().forEach(System.out::println);
+
+	      System.out.println("-- principle --");
+	      HttpPrincipal principal = exchange.getPrincipal();
+	      System.out.println(principal);
+
+	      System.out.println("-- HTTP method --");
+	      String requestMethod = exchange.getRequestMethod();
+	      System.out.println(requestMethod);
+
+	      System.out.println("-- query --");
+	      URI requestURI = exchange.getRequestURI();
+	      String query = requestURI.getQuery();
+	      System.out.println(query);
+	  }
+	
 }
+    
+    
+
