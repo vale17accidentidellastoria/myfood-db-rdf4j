@@ -34,6 +34,7 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.jline.utils.Log;
 
 public class App {
 	
@@ -87,12 +88,10 @@ public class App {
 		
 		URI requestURI = exchange.getRequestURI();
 		System.out.println("requesturi " + requestURI);
-		//System.out.println(requestURI.getQuery());
+		System.out.println(requestURI.getQuery());
 		
 		String queryString = requestURI.getQuery().substring(6);
-
   	    
-		//queryString = exchange.getRequestBody();
 		System.out.println(queryString);
 		TupleQuery query = null;
 		
@@ -116,7 +115,7 @@ public class App {
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
 				//response += "?subject = " + solution.getValue("subject") +"\n";
-				response += solution.toString();		   
+				response += solution.toString() + "\n";		   
 			}			
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
