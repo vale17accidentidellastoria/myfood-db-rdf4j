@@ -1,9 +1,10 @@
 package it.myfood.db;
 
 import java.net.*;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import com.sun.net.httpserver.Headers;
@@ -44,14 +45,14 @@ public class App {
 		//Call function to create Rdf4j database
 		createRdf4jDB();
 
-		
+		/*
 		// To make it work on heroku
 		int port = Integer.valueOf(System.getenv("PORT"));
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		
+		*/
 				
 		//to make it work locally
-		//HttpServer server = HttpServer.create(new InetSocketAddress(8888), 0);
+		HttpServer server = HttpServer.create(new InetSocketAddress(8888), 0);
 		  
 		//Route to welcome page
 		HttpContext context = server.createContext("/");
@@ -85,20 +86,18 @@ public class App {
 	private static void handleDB(HttpExchange exchange) throws IOException {
 		
 		URI requestURI = exchange.getRequestURI();
-	      
-		//Let's try a query
-	      
-		String queryString = "PREFIX ex: <http://example.org/> \n";
-		queryString += "PREFIX foaf: <" + FOAF.NAMESPACE + "> \n";
-		queryString += "SELECT ?subject ?predicate ?object \n";
-		queryString += "WHERE { \n";
-		queryString += "    ?subject ?predicate ?object \n";
-		queryString += "}";
+		System.out.println("requesturi " + requestURI);
+		//System.out.println(requestURI.getQuery());
+		
+		String queryString = requestURI.getQuery().substring(6);
+
   	    
+		//queryString = exchange.getRequestBody();
+		System.out.println(queryString);
 		TupleQuery query = null;
 		
 		try {
-			query = conn.prepareTupleQuery(new QueryLanguage("SPARQL"), queryString);
+			query = conn.prepareTupleQuery(new QueryLanguage("SPARQL"), queryString.toString());
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
 		}
