@@ -110,7 +110,8 @@ public class App{
 	
 	@SuppressWarnings("restriction")
 	public static void main(String[] args) throws IOException {
-		  HttpServer server = HttpServer.create(new InetSocketAddress(8500), 0);
+		  int port = Integer.valueOf(System.getenv("PORT"));
+		  HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 		  HttpContext context1 = server.createContext("/");
 	      HttpContext context2 = server.createContext("/example");
 	      context1.setHandler(App::handleRequest);
