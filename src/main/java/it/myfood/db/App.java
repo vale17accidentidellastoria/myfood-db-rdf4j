@@ -13,6 +13,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -35,6 +36,8 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.jline.utils.Log;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class App {
 	
@@ -109,17 +112,32 @@ public class App {
 			e.printStackTrace();
 		}
 	
+		//The response should be JSON
 		String response = null;
+		
+		ArrayList<String> array_elements_JSON = new ArrayList<String>();
 		
 		try {
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
 				//response += "?subject = " + solution.getValue("subject") +"\n";
-				response += solution.toString() + "\n";		   
+				//response += solution.toString() + "\n";
+				String value = solution.toString();
+				String[] parts = value.split("#");
+				String formatted_value = parts[1].substring(0, parts[1].length() - 1);
+				array_elements_JSON.add(formatted_value);
 			}			
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
 		}
+		
+		JSONObject obj = new JSONObject();
+			obj.put("result", array_elements_JSON );
+		 
+		response = obj.toString();
+		
+		//get parmeters from JSON...
+		//JSONArray params = obj.getJSONArray("result");
 		  	    
 		exchange.sendResponseHeaders(200, response.getBytes().length);
 		OutputStream os = exchange.getResponseBody();
